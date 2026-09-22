@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" manifest="cache.appcache">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goldhen</title>
+  <style>
+    :root {
+      --bg-1: #050505;
+      --bg-2: #1a1a1a;
+      --red: #e3121b;
+      --red-dark: #8f0a10;
+      --red-soft: rgba(227, 18, 27, 0.35);
+      --white: #ffffff;
+      --text-dim: #c9c9c9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--white);
+      background: radial-gradient(ellipse at 20% 0%, var(--bg-2) 0%, var(--bg-1) 70%);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ondas decorativas no canto inferior direito */
+    .waves {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      width: 70vw;
+      height: 60vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 980px;
+      padding: 48px 56px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    header img {
+      height: 64px;
+      border-radius: 6px;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      color: var(--text-dim);
+      font-size: 1.05rem;
+      margin: 0 0 20px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .fw {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 14px 20px;
+      background: linear-gradient(180deg, rgba(40, 40, 40, 0.85), rgba(20, 20, 20, 0.85));
+      border: 1px solid rgba(227, 18, 27, 0.35);
+      border-radius: 6px;
+      color: var(--white);
+      font-size: 1.15rem;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .fw:hover,
+    .fw:focus-visible {
+      background: linear-gradient(180deg, var(--red), var(--red-dark));
+      border-color: var(--red);
+      box-shadow: 0 0 18px var(--red-soft);
+      transform: translateY(-2px);
+      outline: none;
+    }
+    
+    hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, var(--red), rgba(227, 18, 27, 0.1));
+      margin: 48px 0 20px;
+    }
+
+    .info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    .info svg { color: var(--red); }
+
+    @media (max-width: 800px) {
+      .container { padding: 32px 16px; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <svg class="waves" viewBox="0 0 700 400" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="w1" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#e3121b" stop-opacity="0"/>
+        <stop offset="1" stop-color="#e3121b" stop-opacity="0.55"/>
+      </linearGradient>
+      <linearGradient id="w2" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#8f0a10" stop-opacity="0"/>
+        <stop offset="1" stop-color="#8f0a10" stop-opacity="0.7"/>
+      </linearGradient>
+    </defs>
+    <path d="M0 400 C 250 380, 500 300, 700 120 L 700 400 Z" fill="url(#w2)"/>
+    <path d="M100 400 C 350 370, 560 300, 700 220 L 700 400 Z" fill="url(#w1)"/>
+    <path d="M0 395 C 260 370, 520 280, 700 90" fill="none" stroke="#e3121b" stroke-opacity="0.6" stroke-width="1.5"/>
+  </svg>
+
+  <main class="container">
+    <header>
+      <img src="microtec.png" alt="Microtec">
+      <h1>Goldhen</h1>
+    </header>
+
+    <p class="subtitle">Firmware disponíveis:</p>
+
+    <div class="grid" id="grid"></div>
+
+    <hr>
+
+    <p class="info">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="11" x2="12" y2="17"/><circle cx="12" cy="7.5" r="0.6" fill="currentColor"/>
+      </svg>
+      <span id="spin"></span>
+      <span id="msg">Reinicie seu ps4</span>
+      <span id="state"></span>
+      <span id="out"></span>
+    </p>
+    <script type="module">
+      import "./jb.js?v=10";
+    </script>
+  </main>
+
+  <script>
+    const versoes = ["11.00", "11.50", "12.00", "12.50", "13.00", "13.02", "13.04", "13.50", "13.52"];
+
+    document.getElementById("grid").innerHTML = versoes
+      .map(v => `<span class="fw"><span class="ver">${v}</span></span>`)
+      .join("");
+  </script>
+</body>
+</html>
